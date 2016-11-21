@@ -142,23 +142,22 @@ namespace ConsoleApplication2
             {
 
                 Console.WriteLine("Parakalo sindethite sto Twiter");
-                // Create a new set of credentials for the application.
+            
                 var appCredentials = new TwitterCredentials("0rbIj70OY04gB6nbMuXaCArGl", "8sBsmmv6UbLBv3OjnPRDSwiopDlezfcAoxuFKRLyiqDxZ1wrt5");
 
-                // Init the authentication process and store the related `AuthenticationContext`.
+               
                 var authenticationContext = AuthFlow.InitAuthentication(appCredentials);
-
-                // Go to the URL so that Twitter authenticates the user and gives him a PIN code.
+                
                 Process.Start(authenticationContext.AuthorizationURL);
 
-                // Ask the user to enter the pin code given by Twitter
+               
                 Console.WriteLine("Θα σας δοθει ενας κωδικος, πληκτρολογηστε εδω");
                 var pinCode = Console.ReadLine();
 
-                // With this pin code it is now possible to get the credentials back from Twitter
+                
                 var userCredentials = AuthFlow.CreateCredentialsFromVerifierCode(pinCode, authenticationContext);
 
-                // Use the user credentials in your application
+                
                 Auth.SetCredentials(userCredentials);
 
                 var firstTweet = Tweet.PublishTweet("Hello World!");
