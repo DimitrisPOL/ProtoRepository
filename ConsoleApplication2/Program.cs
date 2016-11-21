@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Reflection;
 using Tweetinvi;
-
+using Tweetinvi.Models;
+using Tweetinvi.Parameters;
+using Tweetinvi.Streaming;
+using Stream = Tweetinvi.Stream;
 using System.IO;
 using System.Diagnostics;
+using Tweetinvi.Exceptions; // Handle Exceptions
+using Tweetinvi.Core.Extensions; // Extension methods provided by Tweetinvi
+using Tweetinvi.Models.DTO; // Data Transfer Objects for Serialization
+using Tweetinvi.Json; // JSON static classes to get json from Twitter.
+using Tweetinvi.Models.Entities;
 
 namespace ConsoleApplication2
 {
@@ -20,12 +28,14 @@ namespace ConsoleApplication2
         
 
     }
+   
     class Program
     {
         
         static void Main(string[] args)
         {
-            
+           
+
             int choise = 1;
             string date1;
             string message="stack overflow";
@@ -130,17 +140,28 @@ namespace ConsoleApplication2
             }
             else if (choise==3)
             {
+
                 Console.WriteLine("Parakalo sindethite sto Twiter");
-                var appCredentials = new Tweetinvi.Models.TwitterCredentials("CONSUMER_KEY", "CONSUMER_SECRET");
+                // Create a new set of credentials for the application.
+                var appCredentials = new TwitterCredentials("0rbIj70OY04gB6nbMuXaCArGl", "8sBsmmv6UbLBv3OjnPRDSwiopDlezfcAoxuFKRLyiqDxZ1wrt5");
+
+                // Init the authentication process and store the related `AuthenticationContext`.
                 var authenticationContext = AuthFlow.InitAuthentication(appCredentials);
-                if (authenticationContext.AuthorizationURL != null)
-                {
-                    Process.Start(authenticationContext.AuthorizationURL);
-                }
+
+                // Go to the URL so that Twitter authenticates the user and gives him a PIN code.
+                Process.Start(authenticationContext.AuthorizationURL);
+
+                // Ask the user to enter the pin code given by Twitter
+                Console.WriteLine("Θα σας δοθει ενας κωδικος, πληκτρολογηστε εδω");
                 var pinCode = Console.ReadLine();
+
+                // With this pin code it is now possible to get the credentials back from Twitter
                 var userCredentials = AuthFlow.CreateCredentialsFromVerifierCode(pinCode, authenticationContext);
+
+                // Use the user credentials in your application
                 Auth.SetCredentials(userCredentials);
-                var firstTweet = Tweet.PublishTweet("PROTO TWEET TOU PROGRAMATOS");
+
+                var firstTweet = Tweet.PublishTweet("Hello World!");
             }
             Console.ReadKey();
         }
