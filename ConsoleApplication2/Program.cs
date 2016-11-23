@@ -16,38 +16,50 @@ using Tweetinvi.Core.Extensions; // Extension methods provided by Tweetinvi
 using Tweetinvi.Models.DTO; // Data Transfer Objects for Serialization
 using Tweetinvi.Json; // JSON static classes to get json from Twitter.
 using Tweetinvi.Models.Entities;
+using System.Text.RegularExpressions;
 
 namespace ConsoleApplication2
-{
-   
-    class ANARTISI 
+{       
+
+    class ANARTISI
     {
-      public string keimeno;
-      public DateTime date;
-         
-        
+        public string keimeno;
+        public DateTime date;
+
+
 
     }
-   
+    class  token
+    {
+        public string AccessToken="";
+        public string AccessTokenSec="";
+    }
+    
+
     class Program
     {
-        
+
+       
         static void Main(string[] args)
         {
-           
+            
+            string[] stringSeparator = new string[] { " " };
+            string[] result;
 
+            int metritis;
             int choise = 1;
             string date1;
-            string message="stack overflow";
+            string message = "stack overflow";
             int Etos;
             int minas;
             int mera;
             int ora;
             int lepto;
             int deuterolepto;
-            
-                Console.WriteLine("1.Nea Anartisi 2.Anagnosi anartiseon 3.<NEO TWEET> 4.exodos");
-                choise = Convert.ToInt32(Console.ReadLine());
+            string AccessToken = "";
+            string AccessTokenSec = "";
+            Console.WriteLine("1.Nea Anartisi 2.Anagnosi anartiseon 3.<NEO TWEET> 4.exodos");
+            choise = Convert.ToInt32(Console.ReadLine());
             if (choise == 1)
             {
                 ANARTISI anartisi1 = new ANARTISI();
@@ -86,6 +98,8 @@ namespace ConsoleApplication2
 
                 anartisi1.date = new DateTime(Etos, minas, mera, ora, lepto, deuterolepto);
 
+                //anoigoume ena arxeio ean den yparxei i grafoume kainourgies plirofories se 
+                //ena yparxon gia tis anartiseis kai pote tha ginoun
                 string path = @"c:\Workplace\MyTest3";
                 if (!File.Exists(path))
                 {
@@ -115,6 +129,7 @@ namespace ConsoleApplication2
             {
 
 
+                //diavazoume oles tis anartiseis mexris stigmis...na prostheso diagrafi...
 
 
                 try
@@ -138,32 +153,154 @@ namespace ConsoleApplication2
                     Console.WriteLine(e.Message);
                 }
             }
-            else if (choise==3)
+            //Epilogi gia apeuthias tweet.Dinoume credentials tis efarmogis
+
+
+
+            else if (choise == 3)
             {
 
-                Console.WriteLine("Parakalo sindethite sto Twiter");
-            
-                var appCredentials = new TwitterCredentials("0rbIj70OY04gB6nbMuXaCArGl", "8sBsmmv6UbLBv3OjnPRDSwiopDlezfcAoxuFKRLyiqDxZ1wrt5");
+                string path1 = @"c:\Workplace\MyTest5";  //elenhoume ean exoume xanasindethei gia na min xreiasti
+                if (!File.Exists(path1))                 //na xanaeisxorismoume captcha
+                {
+                    using (StreamWriter sw = File.CreateText(path1))
+                    {
+                        sw.WriteLine("True");
+                        metritis = 0;
+                    }
+                }
+                else
+                {
+                    metritis = 1;
+                }
 
-               
-                var authenticationContext = AuthFlow.InitAuthentication(appCredentials);
-                
-                Process.Start(authenticationContext.AuthorizationURL);
 
-               
-                Console.WriteLine("Θα σας δοθει ενας κωδικος, πληκτρολογηστε εδω");
-                var pinCode = Console.ReadLine();
+                if (metritis == 0)
+                {
+                    Console.WriteLine("Parakalo sindethite sto Twiter");
 
-                
-                var userCredentials = AuthFlow.CreateCredentialsFromVerifierCode(pinCode, authenticationContext);
+                    var appCredentials = new TwitterCredentials("0rbIj70OY04gB6nbMuXaCArGl", "8sBsmmv6UbLBv3OjnPRDSwiopDlezfcAoxuFKRLyiqDxZ1wrt5");
 
-                
-                Auth.SetCredentials(userCredentials);
 
-                var firstTweet = Tweet.PublishTweet("Hello World!");
+                    var authenticationContext = AuthFlow.InitAuthentication(appCredentials);
+
+                    Process.Start(authenticationContext.AuthorizationURL);
+
+                    //ean den eixame xanasindethei eisxoroume gia proti fora captchad
+                    Console.WriteLine("Θα σας δοθει ενας κωδικος, πληκτρολογηστε εδω");
+                    var pinCode = Console.ReadLine();
+
+
+
+                    var userCredentials = AuthFlow.CreateCredentialsFromVerifierCode(pinCode, authenticationContext);
+
+                    Console.WriteLine("{0}", userCredentials);
+                    string path2 = @"c:\Workplace\MyTest4";
+                    if (!File.Exists(path2))
+                    {
+                        using (StreamWriter sw = File.CreateText(path2))
+                        {
+                            sw.WriteLine("{0} {1}", userCredentials.AccessToken, userCredentials.AccessTokenSecret);
+                        }
+                    }
+                    else
+                    {
+                        //apothikeuoyme ta stoixeia se ena arxeio
+                        File.WriteAllText(path2, string.Empty);
+                        File.AppendAllText(path2, userCredentials.AccessToken);
+                        File.AppendAllText(path2, " ");
+                        File.AppendAllText(path2, userCredentials.AccessTokenSecret);
+
+                    }
+                    Auth.SetCredentials(userCredentials);
+
+
+                    Console.WriteLine("{0}", userCredentials.AccessToken);
+                    Console.WriteLine("{0}", userCredentials.AccessTokenSecret);
+
+                    var firstTweet = Tweet.PublishTweet("Hello World!");
+
+                }//Ean exoume xanasindethei anevazoume apeutheias to tweet
+                else if (metritis == 1)
+                {
+                    try
+                    {
+                        string path2 = @"c:\Workplace\MyTest4";
+
+                        string ApothikeumenaCredentials;
+
+
+                        using (StreamReader sr = new StreamReader(path2))
+                        {
+
+                            // Read the stream to a string, and write the string to the console.
+                            String line = sr.ReadToEnd();
+                            Console.WriteLine(line);
+
+
+                            Char charRange = ' ';
+                            Console.WriteLine(line);
+                            int startIndex = line.IndexOf(charRange);
+                            int endIndex = line.LastIndexOf(charRange);
+                            char separatingChars = ' ';
+                            string[] words = line.Split(separatingChars);
+                            Console.WriteLine("{0} substrings in text:", words.Length);
+                            int i;
+                            for (i = 0; i < 2; i++)
+                            {
+                                if (i == 0)
+                                {
+                                    AccessToken = words[i];
+                                }
+                                else if (i == 1)
+                                {
+                                    AccessTokenSec = words[i];
+                                }
+
+                            }
+
+                            AccessToken = AccessToken.Replace("\n", "");
+                            AccessTokenSec = AccessTokenSec.Replace("\n", "");
+
+                            AccessToken = AccessToken.Replace("\t", "");
+                            AccessTokenSec = AccessTokenSec.Replace("\t", "");
+
+                            AccessToken = AccessToken.Replace(" ", "");
+                            AccessTokenSec = AccessTokenSec.Replace("\r", "");
+                            AccessTokenSec = AccessTokenSec.Replace(" ", "");
+                        }
+
+                    }
+                    catch (Exception e)
+                    {
+
+
+                        Console.WriteLine("The file could not be read:");
+                        Console.WriteLine(e.Message);
+                    }
+
+                    Console.WriteLine(AccessToken);
+                    Console.WriteLine(AccessTokenSec);
+
+
+
+                    // anoigoume to arxeio gia ta credentials ean eixame xanasindethei
+
+     
+                    var creds = new TwitterCredentials("0rbIj70OY04gB6nbMuXaCArGl", "8sBsmmv6UbLBv3OjnPRDSwiopDlezfcAoxuFKRLyiqDxZ1wrt5", AccessToken.Trim(), AccessTokenSec.Trim());
+                Auth.SetCredentials(creds);
+                var first =Tweet.PublishTweet("enadiotriatessera");
+
+
+
+                }
+                     
+
             }
             Console.ReadKey();
+                }
+
+
+            }
         }
-        
-    }
-}
+    
