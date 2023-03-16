@@ -9,6 +9,7 @@ namespace ConsoleApplication2
 	public class Car
 	{
 		string color = "red";
+		string model = "red";
 
 		public Car()
 		{
